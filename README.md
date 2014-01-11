@@ -54,6 +54,20 @@ A store has the following functions:
 - **addDataPoint(Number, Number, [Number])** void. Adds a single datapoint to the store. First parameter is x, second parameter is y. Third parameter is the value, if not specified 1 will be used.
 - **exportdataSet()** Object. Returns the store's data as an object with the same structure that the import object at setDataSet has.
 
+## About min and max
+
+This fork of heatmap.js does not automatically grow the bounds for the
+data points.
+The values specified as `min` and `max` will always be honored
+for drawing the points, however, internally the data points will be
+calculated accurately (may be exceeding `min` or `max`).
+
+Suppose you configured your heatmap with `{max: 20, …}` and you do twice
+a `addDataPoint(100, 100, 15)`. What will be drawn is a data point just
+like you would have done `addDataPoint(100, 100, 20)` (because of the `max`).
+*But* if you now do a `addDataPoint(100, 100, -15)`, a point just like a
+`addDataPoint(100, 100, 15)` will be drawn.
+
 ## License
 heatmap.js is dual-licensed under the MIT and the Beerware license, feel free to use it in your projects.
 
