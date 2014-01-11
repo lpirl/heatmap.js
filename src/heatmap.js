@@ -469,7 +469,7 @@
             me.set("premultiplyAlpha", (testData.data[0] < 60 || testData.data[0] > 70));
 
             for(var x in gradient){
-                grad.addColorStop(x, gradient[x]);
+                grad.addColorStop(x, gradient[x].color);
             }
 
             ctx.fillStyle = grad;
