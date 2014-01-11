@@ -356,7 +356,7 @@
 
         //TODO: move this to _ and replace me.legend
         // (adapt access: me.legend -> me.get("legend"))
-        me.legend = null;
+        this.legend = null;
 
         this.get = function(key){
 
