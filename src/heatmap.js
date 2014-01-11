@@ -219,7 +219,9 @@
             gradientArr.sort(function(a, b){
                 return (a.stop - b.stop);
             });
-            gradientArr.unshift({ stop: 0, value: 'rgba(0,0,0,0)' });
+            if(!gradientConfig.hasOwnProperty(0)){
+                gradientArr.unshift({ stop: 0, value: 'rgba(0,0,0,0)' });
+            }
 
             me.set("gradientArr", gradientArr);
         },
