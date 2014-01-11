@@ -331,11 +331,6 @@
             },
             debug: false
         };
-        // heatmap store containing the datapoints and information about the maximum
-        // accessible via instance.store
-        this.store = new store(this);
-        this.legend = null;
-
         this.get = function(key){
             return _[key];
         };
@@ -345,6 +340,12 @@
         // configure the heatmap when an instance gets created
         this.configure(config);
         // and initialize it
+
+        // heatmap store containing the datapoints and information about the maximum
+        // accessible via instance.store
+        this.store = new store(this);
+        this.legend = null;
+
         this.init();
     };
 
