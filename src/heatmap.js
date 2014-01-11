@@ -24,7 +24,8 @@
             heatmap: hmap
         };
         // the max occurrence - the heatmaps radial gradient alpha transition is based on it
-        this.max = 1;
+        this.max = hmap.get("max");
+        this.min = hmap.get("min");
 
         this.get = function(key){
             return _[key];
@@ -56,6 +57,7 @@
 
             me.set("data", data);
             // do we have a new maximum?
+            //@TODO: check for bounds!!!
             if(me.max < data[x][y]){
                 // max changed, we need to redraw all existing(lower) datapoints
                 heatmap.get("actx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
@@ -73,8 +75,10 @@
             // clear the heatmap before the data set gets drawn
             heatmap.clear();
             this.max = obj.max;
+            this.min = obj.min;
             // if a legend is set, update it
             heatmap.legend && heatmap.legend.update(obj.max);
+            heatmap.legend && heatmap.legend.update(obj.min);
 
             if(internal != null && internal){
                 for(var one in d){
@@ -121,7 +125,7 @@
                 }
             }
 
-            return { max: me.max, data: exportData };
+            return { max: me.max, min: me.min, data: exportData };
         },
         generateRandomDataSet: function(points){
             var heatmap = this.get("heatmap"),
@@ -130,9 +134,14 @@
             var randomset = {},
             max = Math.floor(Math.random()*1000+1);
             randomset.max = max;
+            randomset.min = 0;
             var data = [];
             while(points--){
-                data.push({x: Math.floor(Math.random()*w+1), y: Math.floor(Math.random()*h+1), count: Math.floor(Math.random()*max+1)});
+                data.push({
+                    x: Math.floor(Math.random()*w+1),
+                    y: Math.floor(Math.random()*h+1),
+                    count: Math.floor(Math.random()*max+1)
+                });
             }
             randomset.data = data;
             this.setDataSet(randomset);
@@ -310,6 +319,7 @@
             width : 0,
             height : 0,
             max : false,
+            min : false,
             gradient : false,
             opacity: 180,
             premultiplyAlpha: false,
@@ -347,7 +357,8 @@
                 me.set("radius", config["radius"] || 40);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
-                me.set("max", config.max || false);
+                me.set("max", config.max || 1);
+                me.set("min", config.min || 0);
                 me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
                 me.set("width", config.width || 0);
@@ -559,11 +570,11 @@
                 var me = this,
                     radius = me.get("radius"),
                     ctx = me.get("actx"),
-                    max = me.get("max"),
                     bounds = me.get("bounds"),
                     xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
+                //@TODO: adapt this calculation to work with min also
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
 
                 ctx.shadowOffsetX = 15000;
@@ -615,8 +626,8 @@
                 h = me.get("height");
 
             me.store.set("data",[]);
-            // @TODO: reset stores max to 1
-            //me.store.max = 1;
+            me.store.max = me.get("max");
+            me.store.min = me.get("min");
             me.get("ctx").clearRect(0,0,w,h);
             me.get("actx").clearRect(0,0,w,h);
         },
