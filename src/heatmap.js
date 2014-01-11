@@ -57,10 +57,24 @@
 
             me.set("data", data);
 
-            // do we have a new maximum?
+            /* TODO: In the former days, we checked if there was a new
+             * maximum at this point (see below). Maximums could only
+             * grow and not shrink. If there was a new maximum, we redrew
+             * all points.
+             * If one does implement this feature again for `min` and
+             * `max`, it would be freaking cool if the bounds would
+             * (optionally) shrink again.
+             */
             /* if(me.max < data[x][y]){
                 // max changed, we need to redraw all existing(lower) datapoints
-                heatmap.get("actx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
+                heatmap.get(
+                   "actx"
+                ).clearRect(
+                    0,
+                    0,
+                    heatmap.get("width"),
+                    heatmap.get("height")
+                );
                 me.setDataSet({ max: data[x][y], data: data }, true);
                 return;
             } */
