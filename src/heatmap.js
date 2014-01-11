@@ -222,7 +222,7 @@
 
             for(var key in gradientConfig){
                 if(gradientConfig.hasOwnProperty(key)){
-                    gradientArr.push({ stop: key, value: gradientConfig[key] });
+                    gradientArr.push({ stop: key, value: gradientConfig[key].color, tickLabel: gradientConfig[key].tickLabel });
                 }
             }
             gradientArr.sort(function(a, b){
@@ -275,7 +275,7 @@
         getElement: function(){
             return this.get("element");
         },
-        update: function(max, tickLabels){
+        update: function(){
             var me = this,
                 gradient = me.get("gradientArr"),
                 ctx = me.get("ctx"),
@@ -283,14 +283,21 @@
                 labelText, labelsHtml = "", offset;
 
 
+			var range = Math.abs(store.max - store.min);
+			var rangeStep = range / gradient.length;
             for(var i = 0; i < gradient.length; i++){
 
-                if(tickLabels && tickLabels[i]) {
-                    labelText = tickLabels[i];
+                if(gradient[i].tickLabel) {
+                    labelText = gradient[i].tickLabel;
                 }
-                else {
-                    labelText = max*gradient[i].stop >> 0;
-                }
+				else {
+					if(i == gradient.length - 1) {
+						labelText = Math.round(store.min * 10) / 10;
+					}
+					else {
+						labelText = Math.round((store.min + rangeStep * i) * 10) / 10;
+					}
+				}
                 offset = (ctx.measureText(labelText).width/2) >> 0;
 
                 if(i == 0){
