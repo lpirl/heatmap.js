@@ -276,12 +276,12 @@
 
             for(var i = 0; i < gradient.length; i++){
 
-				if(tickLabels && tickLabels[i]) {
-					labelText = tickLabels[i];
-				}
-				else {
-					labelText = max*gradient[i].stop >> 0;
-				}
+                if(tickLabels && tickLabels[i]) {
+                    labelText = tickLabels[i];
+                }
+                else {
+                    labelText = max*gradient[i].stop >> 0;
+                }
                 offset = (ctx.measureText(labelText).width/2) >> 0;
 
                 if(i == 0){
@@ -324,7 +324,7 @@
         // heatmap store containing the datapoints and information about the maximum
         // accessible via instance.store
         this.store = new store(this);
-		this.legend = null;
+        this.legend = null;
 
         this.get = function(key){
             return _[key];
@@ -357,7 +357,7 @@
                 if(config.legend){
                     var legendCfg = config.legend;
                     legendCfg.gradient = me.get("gradient");
-					me.legend = new legend(legendCfg);
+                    me.legend = new legend(legendCfg);
                 }
 
         },
@@ -538,11 +538,11 @@
                     imageData[i-1]=palette[offset+2];
 
                     if (premultiplyAlpha) {
-                    	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
-                    	// appropriately so when the multiplication happens the correct value will result.
-                    	imageData[i-3] /= 255/finalAlpha;
-                    	imageData[i-2] /= 255/finalAlpha;
-                    	imageData[i-1] /= 255/finalAlpha;
+                        // To fix browsers that premultiply incorrectly, we'll pass in a value scaled
+                        // appropriately so when the multiplication happens the correct value will result.
+                        imageData[i-3] /= 255/finalAlpha;
+                        imageData[i-2] /= 255/finalAlpha;
+                        imageData[i-1] /= 255/finalAlpha;
                     }
 
                     // we want the heatmap to have a gradient from transparent to the colors
