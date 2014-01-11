@@ -56,14 +56,15 @@
             data[x][y]+=(arguments.length<3)?1:arguments[2];
 
             me.set("data", data);
+
             // do we have a new maximum?
-            //@TODO: check for bounds!!!
-            if(me.max < data[x][y]){
+            /* if(me.max < data[x][y]){
                 // max changed, we need to redraw all existing(lower) datapoints
                 heatmap.get("actx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
                 me.setDataSet({ max: data[x][y], data: data }, true);
                 return;
-            }
+            } */
+
             heatmap.drawAlpha(x, y, data[x][y], true);
         },
         setDataSet: function(obj, internal){
@@ -338,7 +339,13 @@
             },
             debug: false
         };
+
+        //TODO: move this to _ and replace me.legend
+        // (adapt access: me.legend -> me.get("legend"))
+        me.legend = null;
+
         this.get = function(key){
+
             return _[key];
         };
         this.set = function(key, value){
@@ -351,7 +358,6 @@
         // heatmap store containing the datapoints and information about the maximum
         // accessible via instance.store
         this.store = new store(this);
-        this.legend = null;
 
         this.init();
     };
