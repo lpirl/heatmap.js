@@ -656,11 +656,12 @@
                     radius = me.get("radius"),
                     ctx = me.get("actx"),
                     bounds = me.get("bounds"),
-                    blurEnlargementFactor = 0.1 * blur,
-                    xb = x - (blurEnlargementFactor * radius) >> 0,
-                    yb = y - (blurEnlargementFactor * radius) >> 0,
-                    xc = x + (blurEnlargementFactor * radius) >> 0,
-                    yc = y + (blurEnlargementFactor * radius) >> 0,
+                    blur = me.get("blur"),
+                    // move the circles center 150% to top left:
+                    xb = x - (1.5 * radius) >> 0,
+                    yb = y - (1.5 * radius) >> 0,
+                    xc = x + (1.5 * radius) >> 0,
+                    yc = y + (1.5 * radius) >> 0,
                     redGreen = me._moodToRedGreen(mood),
                     shadowColor = 'rgba(' +
                         redGreen.red + ',' +
