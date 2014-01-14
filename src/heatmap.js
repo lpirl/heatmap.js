@@ -351,6 +351,7 @@
                 t: 1000,
                 b: 0
             },
+
             debug: false
         };
 
@@ -475,7 +476,7 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0,0,1,256);
 
-            me.set("gradient", ctx.getImageData(0,0,1,256).data);
+            me.set("palette", ctx.getImageData(0,0,1,256).data);
         },
         getWidth: function(element){
             var width = element.offsetWidth;
@@ -509,7 +510,7 @@
                     ctx = me.get("ctx"),
                     x2 = radius * 3,
                     premultiplyAlpha = me.get("premultiplyAlpha"),
-                    palette = me.get("gradient"),
+                    palette = me.get("palette"),
                     opacity = me.get("opacity"),
                     bounds = me.get("bounds"),
                     left, top, bottom, right,
