@@ -52,7 +52,7 @@
             if(!data[x][y])
                 data[x][y] = 0;
 
-            // if count parameter is set increment by count otherwise by 1
+            // if temperature parameter is set increment by temperature otherwise by 1
             data[x][y]+=(arguments.length<3)?1:arguments[2];
 
             me.set("data", data);
@@ -110,14 +110,14 @@
             }else{
                 while(dlen--){
                     var point = d[dlen];
-                    heatmap.drawAlpha(point.x, point.y, point.count, false);
+                    heatmap.drawAlpha(point.x, point.y, point.temperature, false);
                     if(!data[point.x])
                         data[point.x] = [];
 
                     if(!data[point.x][point.y])
                         data[point.x][point.y] = 0;
 
-                    data[point.x][point.y] = point.count;
+                    data[point.x][point.y] = point.temperature;
                 }
             }
             heatmap.colorize();
@@ -136,7 +136,7 @@
                     if(two === undefined)
                         continue;
                     // if both indexes are defined, push the values into the array
-                    exportData.push({x: parseInt(one, 10), y: parseInt(two, 10), count: data[one][two]});
+                    exportData.push({x: parseInt(one, 10), y: parseInt(two, 10), temperature: data[one][two]});
                 }
             }
 
@@ -155,7 +155,7 @@
                 data.push({
                     x: Math.floor(Math.random()*w+1),
                     y: Math.floor(Math.random()*h+1),
-                    count: Math.floor(Math.random()*max+1)
+                    temperature: Math.floor(Math.random()*max+1)
                 });
             }
             randomset.data = data;
@@ -237,14 +237,14 @@
 
             for(var key in gradientConfig){
                 if(gradientConfig.hasOwnProperty(key)){
-                    gradientArr.push({ stop: key, value: gradientConfig[key].color, tickLabel: gradientConfig[key].tickLabel });
+                    gradientArr.push({ stop: key, color: gradientConfig[key].color, tickLabel: gradientConfig[key].tickLabel });
                 }
             }
             gradientArr.sort(function(a, b){
                 return (a.stop - b.stop);
             });
             if(!gradientConfig.hasOwnProperty(0)){
-                gradientArr.unshift({ stop: 0, value: 'rgba(0,0,0,0)' });
+                gradientArr.unshift({ stop: 0, color: 'rgba(0,0,0,0)' });
             }
 
             me.set("gradientArr", gradientArr);
@@ -263,7 +263,7 @@
             grad = ctx.createLinearGradient(0,5,256,10);
 
             for(var i = 0; i < length; i++){
-                grad.addColorStop(1/(length-1) * i, gradArr[i].value);
+                grad.addColorStop(1/(length-1) * i, gradArr[i].color);
             }
 
             ctx.fillStyle = grad;
@@ -594,7 +594,7 @@
                 image.data = imageData;
                 ctx.putImageData(image, left, top);
         },
-        drawAlpha: function(x, y, count, colorize){
+        drawAlpha: function(x, y, temperature, colorize){
                 // storing the variables because they will be often used
                 var me = this,
                     radius = me.get("radius"),
@@ -604,7 +604,9 @@
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
                 //@TODO: adapt this calculation to work with min also
-                ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
+                r =
+                g =
+                ctx.shadowColor = ('rgba(0,0,0,'+((temperature)?(temperature/me.store.max):'0.1')+')');
 
                 ctx.shadowOffsetX = 15000;
                 ctx.shadowOffsetY = 15000;
