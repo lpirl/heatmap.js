@@ -578,10 +578,12 @@
                     offset = imageData[i-2] * 4;
 
 
+                    // TODO: replace magic number 2 * finalAlpha --> increase visibility of circles
+
                     // we ve started with i=3
                     // set the new r, g and b values
-                    //finalAlpha = (alpha < opacity)?alpha:opacity;
-                    finalAlpha = 180;
+                    finalAlpha = (alpha < opacity)?alpha:opacity;
+                    finalAlpha = Math.min(255, Math.round(finalAlpha * 2));
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
