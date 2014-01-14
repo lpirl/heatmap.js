@@ -601,8 +601,8 @@
                 green = ((mood + max)/range)*255,
                 red = 255 - green;
             return {
-                red: this._sanitizeColorValue(red, 255),
-                green: this._sanitizeColorValue(green, 255)
+                red: this._sanitizeColorValue(red),
+                green: this._sanitizeColorValue(green)
             }
         },
         _redGreenToMood: function(red, green) {
