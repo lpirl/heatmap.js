@@ -1,5 +1,5 @@
 /*
- * heatmap.js 1.0 -    JavaScript Heatmap Library
+ * moodmap.js 1.0 -    JavaScript Moodmap Library
  *
  * Copyright (c) 2011, Patrick Wied (http://www.patrick-wied.at)
  * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -7,25 +7,25 @@
  */
 
 (function(w){
-    // the heatmapFactory creates heatmap instances
-    var heatmapFactory = (function(){
+    // the moodmapFactory creates moodmap instances
+    var moodmapFactory = (function(){
 
     // store object constructor
-    // a heatmap contains a store
-    // the store has to know about the heatmap in order to trigger heatmap updates when datapoints get added
-    var store = function store(hmap){
+    // a moodmap contains a store
+    // the store has to know about the moodmap in order to trigger moodmap updates when datapoints get added
+    var store = function store(mmap){
 
         var _ = {
             // data is a two dimensional array
             // a datapoint gets saved as data[point-x-value][point-y-value]
             // the value at [point-x-value][point-y-value] is the occurrence of the datapoint
             data: [],
-            // tight coupling of the heatmap object
-            heatmap: hmap
+            // tight coupling of the moodmap object
+            moodmap: mmap
         };
-        // the max occurrence - the heatmaps radial gradient alpha transition is based on it
-        this.max = hmap.get("max");
-        this.min = hmap.get("min");
+        // the max occurrence - the moodmaps radial gradient alpha transition is based on it
+        this.max = mmap.get("max");
+        this.min = mmap.get("min");
 
         this.get = function(key){
             return _[key];
@@ -43,7 +43,7 @@
                 return;
 
             var me = this,
-                heatmap = me.get("heatmap"),
+                moodmap = me.get("moodmap"),
                 data = me.get("data");
 
             if(!data[x])
@@ -67,33 +67,33 @@
              */
             /* if(me.max < data[x][y]){
                 // max changed, we need to redraw all existing(lower) datapoints
-                heatmap.get(
+                moodmap.get(
                    "actx"
                 ).clearRect(
                     0,
                     0,
-                    heatmap.get("width"),
-                    heatmap.get("height")
+                    moodmap.get("width"),
+                    moodmap.get("height")
                 );
                 me.setDataSet({ max: data[x][y], data: data }, true);
                 return;
             } */
 
-            heatmap.drawAlpha(x, y, data[x][y], true);
+            moodmap.drawAlpha(x, y, data[x][y], true);
         },
         setDataSet: function(obj, internal){
             var me = this,
-                heatmap = me.get("heatmap"),
+                moodmap = me.get("moodmap"),
                 data = [],
                 d = obj.data,
                 dlen = d.length;
-            // clear the heatmap before the data set gets drawn
-            heatmap.clear();
+            // clear the moodmap before the data set gets drawn
+            moodmap.clear();
             this.max = obj.max;
             this.min = obj.min;
             // if a legend is set, update it
-            heatmap.legend && heatmap.legend.update(obj.max);
-            heatmap.legend && heatmap.legend.update(obj.min);
+            moodmap.legend && moodmap.legend.update(obj.max);
+            moodmap.legend && moodmap.legend.update(obj.min);
 
             if(internal != null && internal){
                 for(var one in d){
@@ -104,13 +104,13 @@
                         if(two === undefined)
                             continue;
                         // if both indexes are defined, push the values into the array
-                        heatmap.drawAlpha(one, two, d[one][two], false);
+                        moodmap.drawAlpha(one, two, d[one][two], false);
                     }
                 }
             }else{
                 while(dlen--){
                     var point = d[dlen];
-                    heatmap.drawAlpha(point.x, point.y, point.mood, false);
+                    moodmap.drawAlpha(point.x, point.y, point.mood, false);
                     if(!data[point.x])
                         data[point.x] = [];
 
@@ -120,7 +120,7 @@
                     data[point.x][point.y] = point.mood;
                 }
             }
-            heatmap.colorize();
+            moodmap.colorize();
             this.set("data", d);
         },
         exportDataSet: function(){
@@ -143,9 +143,9 @@
             return { max: me.max, min: me.min, data: exportData };
         },
         generateRandomDataSet: function(points){
-            var heatmap = this.get("heatmap"),
-            w = heatmap.get("width"),
-            h = heatmap.get("height");
+            var moodmap = this.get("moodmap"),
+            w = moodmap.get("width"),
+            h = moodmap.get("height");
             var randomset = {},
             max = Math.floor(Math.random()*1000+1);
             randomset.max = max;
@@ -212,7 +212,7 @@
 
             element = document.createElement("div");
             element.style.cssText = "border-radius:5px;position:absolute;"+positionCss+"font-family:Helvetica; width:256px;z-index:10000000000; background:rgba(255,255,255,1);padding:10px;border:1px solid black;margin:0;";
-            element.innerHTML = "<h3 id='heatmap-legend-title' style='padding:0;margin:0;text-align:center;font-size:16px;'>"+title+"</h3>";
+            element.innerHTML = "<h3 id='moodmap-legend-title' style='padding:0;margin:0;text-align:center;font-size:16px;'>"+title+"</h3>";
             // create gradient in canvas
             labelsEl.style.cssText = "position:relative;font-size:12px;display:block;list-style:none;list-style-type:none;margin:0;height:15px;";
 
@@ -327,8 +327,8 @@
         }
     };
 
-    // heatmap object constructor
-    var heatmap = function heatmap(config){
+    // moodmap object constructor
+    var moodmap = function moodmap(config){
         // private variables
         var _ = {
             radius : 40,
@@ -366,11 +366,11 @@
         this.set = function(key, value){
             _[key] = value;
         };
-        // configure the heatmap when an instance gets created
+        // configure the moodmap when an instance gets created
         this.configure(config);
         // and initialize it
 
-        // heatmap store containing the datapoints and information about the maximum
+        // moodmap store containing the datapoints and information about the maximum
         // accessible via instance.store
         this.store = new store(this);
 
@@ -378,7 +378,7 @@
     };
 
     // public functions
-    heatmap.prototype = {
+    moodmap.prototype = {
         configure: function(config){
                 var me = this,
                     rout, rin;
@@ -590,7 +590,7 @@
                         imageData[i-1] /= 255/finalAlpha;
                     }
 
-                    // we want the heatmap to have a gradient from transparent to the colors
+                    // we want the moodmap to have a gradient from transparent to the colors
                     // as long as alpha is lower than the defined opacity (maximum), we'll use the alpha value
                     imageData[i] = finalAlpha;
                 }
@@ -714,7 +714,7 @@
 
     return {
             create: function(config){
-                return new heatmap(config);
+                return new moodmap(config);
             },
             util: {
                 mousePosition: function(ev){
@@ -743,5 +743,5 @@
             }
         };
     })();
-    w.h337 = w.heatmapFactory = heatmapFactory;
+    w.h337 = w.moodmapFactory = moodmapFactory;
 })(window);
