@@ -513,6 +513,7 @@
                     palette = me.get("palette"),
                     opacity = me.get("opacity"),
                     bounds = me.get("bounds"),
+                    max = me.store.max,
                     left, top, bottom, right,
                     image, imageData, length, alpha, offset, finalAlpha;
 
@@ -570,9 +571,13 @@
                     if(!offset)
                         continue;
 
+                    offset = imageData[i-2] * 4;
+
+
                     // we ve started with i=3
                     // set the new r, g and b values
-                    finalAlpha = (alpha < opacity)?alpha:opacity;
+                    //finalAlpha = (alpha < opacity)?alpha:opacity;
+                    finalAlpha = 180;
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
@@ -601,8 +606,8 @@
                 green = ((mood + max)/range)*255,
                 red = 255 - green;
             return {
-                red: this._sanitizeColorValue(red, 255),
-                green: this._sanitizeColorValue(green, 255)
+                red: this._sanitizeColorValue(red),
+                green: this._sanitizeColorValue(green)
             }
         },
         _redGreenToMood: function(red, green) {
@@ -620,6 +625,23 @@
                 )
             )
         },
+        drawCircle: function(context, x, y, color, radius, blur) {
+            //draw circle outside of canvas and only show blured shadow
+            var offset = 15000;
+
+            context.shadowBlur = blur;
+            context.shadowOffsetX = offset;
+            context.shadowOffsetY = offset;
+
+            context.fillStyle = color;
+            context.shadowColor=color; //set the shadow colour to that of the fill
+
+            context.beginPath();
+            context.arc(x - offset,y - offset,radius,0,Math.PI*2,true);
+            context.fill();
+            context.stroke();
+        },
+
         drawAlpha: function(x, y, mood, colorize){
                 // storing the variables because they will be often used
                 var me = this,
@@ -630,18 +652,9 @@
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
                 //@TODO: adapt this calculation to work with min also
-                r =
-                g =
-                ctx.shadowColor = ('rgba(0,0,0,'+((mood)?(mood/me.store.max):'0.1')+')');
-
-                ctx.shadowOffsetX = 15000;
-                ctx.shadowOffsetY = 15000;
-                ctx.shadowBlur = 15;
-
-                ctx.beginPath();
-                ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
-                ctx.closePath();
-                ctx.fill();
+                var shadowColor = 'rgba(0,0,0,'+((mood)?(mood/me.store.max):'0.1')+')';
+                this.drawCircle(ctx, x, y, shadowColor, radius, 15);
+                
                 if(colorize){
                     // finally colorize the area
                     me.colorize(xb,yb);
