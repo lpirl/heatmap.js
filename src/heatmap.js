@@ -52,7 +52,7 @@
             if(!data[x][y])
                 data[x][y] = 0;
 
-            // if temperature parameter is set increment by temperature otherwise by 1
+            // if mood parameter is set increment by mood otherwise by 1
             data[x][y]+=(arguments.length<3)?1:arguments[2];
 
             me.set("data", data);
@@ -110,14 +110,14 @@
             }else{
                 while(dlen--){
                     var point = d[dlen];
-                    heatmap.drawAlpha(point.x, point.y, point.temperature, false);
+                    heatmap.drawAlpha(point.x, point.y, point.mood, false);
                     if(!data[point.x])
                         data[point.x] = [];
 
                     if(!data[point.x][point.y])
                         data[point.x][point.y] = 0;
 
-                    data[point.x][point.y] = point.temperature;
+                    data[point.x][point.y] = point.mood;
                 }
             }
             heatmap.colorize();
@@ -136,7 +136,7 @@
                     if(two === undefined)
                         continue;
                     // if both indexes are defined, push the values into the array
-                    exportData.push({x: parseInt(one, 10), y: parseInt(two, 10), temperature: data[one][two]});
+                    exportData.push({x: parseInt(one, 10), y: parseInt(two, 10), mood: data[one][two]});
                 }
             }
 
@@ -155,7 +155,7 @@
                 data.push({
                     x: Math.floor(Math.random()*w+1),
                     y: Math.floor(Math.random()*h+1),
-                    temperature: Math.floor(Math.random()*max+1)
+                    mood: Math.floor(Math.random()*max+1)
                 });
             }
             randomset.data = data;
@@ -594,7 +594,33 @@
                 image.data = imageData;
                 ctx.putImageData(image, left, top);
         },
-        drawAlpha: function(x, y, temperature, colorize){
+        _moodToRedGreen: function(mood) {
+            var me = this,
+                max = me.store.max,
+                range = Math.abs(me.store.max - me.store.min),
+                green = ((mood + max)/range)*255,
+                red = 255 - green;
+            return {
+                red: this._sanitizeColorValue(red, 255),
+                green: this._sanitizeColorValue(green, 255)
+            }
+        },
+        _redGreenToMood: function(red, green) {
+            var me = this,
+                max = me.store.max,
+                range = Math.abs(me.store.max - me.store.min);
+            return ((green * range) / 255) - max;
+        },
+        _sanitizeColorValue: function(colorValue){
+            return Math.max(
+                0,
+                Math.min(
+                    255,
+                    colorValue
+                )
+            )
+        },
+        drawAlpha: function(x, y, mood, colorize){
                 // storing the variables because they will be often used
                 var me = this,
                     radius = me.get("radius"),
@@ -606,7 +632,7 @@
                 //@TODO: adapt this calculation to work with min also
                 r =
                 g =
-                ctx.shadowColor = ('rgba(0,0,0,'+((temperature)?(temperature/me.store.max):'0.1')+')');
+                ctx.shadowColor = ('rgba(0,0,0,'+((mood)?(mood/me.store.max):'0.1')+')');
 
                 ctx.shadowOffsetX = 15000;
                 ctx.shadowOffsetY = 15000;
