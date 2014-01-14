@@ -641,13 +641,13 @@
             context.shadowOffsetX = offset;
             context.shadowOffsetY = offset;
 
-            context.fillStyle = color;
-            context.shadowColor=color; //set the shadow colour to that of the fill
+            //set the shadow colour to that of the fill:
+            context.shadowColor = color;
 
             context.beginPath();
             context.arc(x - offset,y - offset,radius,0,Math.PI*2,true);
             context.fill();
-            context.stroke();
+            context.closePath();
         },
 
         drawAlpha: function(x, y, mood, colorize){
