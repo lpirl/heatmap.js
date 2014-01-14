@@ -298,21 +298,21 @@
                 labelText, labelsHtml = "", offset;
 
 
-			var range = Math.abs(store.max - store.min);
-			var rangeStep = range / gradient.length;
+            var range = Math.abs(store.max - store.min);
+            var rangeStep = range / gradient.length;
             for(var i = 0; i < gradient.length; i++){
 
                 if(gradient[i].tickLabel) {
                     labelText = gradient[i].tickLabel;
                 }
-				else {
-					if(i == gradient.length - 1) {
-						labelText = Math.round(store.min * 10) / 10;
-					}
-					else {
-						labelText = Math.round((store.min + rangeStep * i) * 10) / 10;
-					}
-				}
+                else {
+                    if(i == gradient.length - 1) {
+                        labelText = Math.round(store.min * 10) / 10;
+                    }
+                    else {
+                        labelText = Math.round((store.min + rangeStep * i) * 10) / 10;
+                    }
+                }
                 offset = (ctx.measureText(labelText).width/2) >> 0;
 
                 if(i == 0){
@@ -616,7 +616,7 @@
                 0,
                 Math.min(
                     255,
-                    colorValue
+                    Math.round(colorValue)
                 )
             )
         },
@@ -627,12 +627,15 @@
                     ctx = me.get("actx"),
                     bounds = me.get("bounds"),
                     xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
-                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
+                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0,
+                    redGreen = me._moodToRedGreen(mood);
 
-                //@TODO: adapt this calculation to work with min also
-                r =
-                g =
-                ctx.shadowColor = ('rgba(0,0,0,'+((mood)?(mood/me.store.max):'0.1')+')');
+                ctx.shadowColor = 'rgba(' +
+                    redGreen.red + ',' +
+                    redGreen.green + ',' +
+                    0 + ',' +   // we are bicolor, no blue here
+                    0.5 +       // treat all layers equally
+                ')';
 
                 ctx.shadowOffsetX = 15000;
                 ctx.shadowOffsetY = 15000;
@@ -640,26 +643,27 @@
 
                 ctx.beginPath();
                 ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
-                ctx.closePath();
                 ctx.fill();
-                if(colorize){
-                    // finally colorize the area
-                    me.colorize(xb,yb);
-                }else{
-                    // or update the boundaries for the area that then should be colorized
-                    if(xb < bounds["l"]){
-                        bounds["l"] = xb;
-                    }
-                    if(yb < bounds["t"]){
-                        bounds["t"] = yb;
-                    }
-                    if(xc > bounds['r']){
-                        bounds['r'] = xc;
-                    }
-                    if(yc > bounds['b']){
-                        bounds['b'] = yc;
-                    }
-                }
+                ctx.closePath();
+
+                //~ if(colorize){
+                    //~ // finally colorize the area
+                    //~ me.colorize(xb,yb);
+                //~ }else{
+                    //~ // or update the boundaries for the area that then should be colorized
+                    //~ if(xb < bounds["l"]){
+                        //~ bounds["l"] = xb;
+                    //~ }
+                    //~ if(yb < bounds["t"]){
+                        //~ bounds["t"] = yb;
+                    //~ }
+                    //~ if(xc > bounds['r']){
+                        //~ bounds['r'] = xc;
+                    //~ }
+                    //~ if(yc > bounds['b']){
+                        //~ bounds['b'] = yc;
+                    //~ }
+                //~ }
         },
         toggleDisplay: function(){
                 var me = this,
