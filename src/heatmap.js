@@ -332,6 +332,8 @@
         // private variables
         var _ = {
             radius : 40,
+            blur : 30, // hardness for intersection of points
+            drawingOffset: 15000,
             element : {},
             canvas : {},
             acanvas: {},
@@ -418,6 +420,8 @@
                     acanvas = document.createElement("canvas"),
                     ctx = canvas.getContext("2d"),
                     actx = acanvas.getContext("2d"),
+                    offset = me.get("drawingOffset"),
+                    blur = me.get("blur"),
                     element = me.get("element");
 
 
@@ -443,9 +447,9 @@
                 if(me.get("debug"))
                     document.body.appendChild(acanvas);
 
-                actx.shadowOffsetX = 15000;
-                actx.shadowOffsetY = 15000;
-                actx.shadowBlur = 15;
+                actx.shadowOffsetX = offset;
+                actx.shadowOffsetY = offset;
+                actx.shadowBlur = blur;
         },
         initColorPalette: function(){
 
@@ -625,9 +629,11 @@
                 )
             )
         },
-        drawCircle: function(context, x, y, color, radius, blur) {
+        drawCircle: function(context, x, y, color) {
             //draw circle outside of canvas and only show blured shadow
-            var offset = 15000;
+            var offset = this.get("drawingOffset"),
+                radius = this.get("radius"),
+                blur = this.get("blur");
 
             context.shadowBlur = blur;
             context.shadowOffsetX = offset;
@@ -648,8 +654,11 @@
                     radius = me.get("radius"),
                     ctx = me.get("actx"),
                     bounds = me.get("bounds"),
-                    xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
-                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0,
+                    blurEnlargementFactor = 0.1 * blur,
+                    xb = x - (blurEnlargementFactor * radius) >> 0,
+                    yb = y - (blurEnlargementFactor * radius) >> 0,
+                    xc = x + (blurEnlargementFactor * radius) >> 0,
+                    yc = y + (blurEnlargementFactor * radius) >> 0,
                     redGreen = me._moodToRedGreen(mood),
                     shadowColor = 'rgba(' +
                         redGreen.red + ',' +
@@ -658,7 +667,7 @@
                         0.5 +       // treat all layers equally
                     ')';
 
-                this.drawCircle(ctx, x, y, shadowColor, radius, 15);
+                this.drawCircle(ctx, x, y, shadowColor);
 
                 if(colorize){
                     // finally colorize the area
