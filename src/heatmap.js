@@ -38,7 +38,7 @@
     store.prototype = {
         // function for adding datapoints to the store
         // datapoints are usually defined by x and y but could also contain a third parameter which represents the occurrence
-        addDataPoint: function(x, y){
+        addDataPoint: function(x, y, mood){
             if(x < 0 || y < 0)
                 return;
 
@@ -53,7 +53,7 @@
                 data[x][y] = 0;
 
             // if mood parameter is set increment by mood otherwise by 1
-            data[x][y]+=(arguments.length<3)?1:arguments[2];
+            data[x][y]+=(mood && mood != null) ? mood : 1;
 
             me.set("data", data);
 
