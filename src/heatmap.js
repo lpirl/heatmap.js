@@ -660,25 +660,24 @@
 
                 this.drawCircle(ctx, x, y, shadowColor, radius, 15);
 
-                //~ if(colorize){
-                    //~ // finally colorize the area
-                    //~ me.colorize(xb,yb);
-                //~ }else{
-                    //~ // or update the boundaries for the area that then should be colorized
-                    //~ if(xb < bounds["l"]){
-                        //~ bounds["l"] = xb;
-                    //~ }
-                    //~ if(yb < bounds["t"]){
-                        //~ bounds["t"] = yb;
-                    //~ }
-                    //~ if(xc > bounds['r']){
-                        //~ bounds['r'] = xc;
-                    //~ }
-                    //~ if(yc > bounds['b']){
-                        //~ bounds['b'] = yc;
-                    //~ }
-                //~ }
-
+                if(colorize){
+                    // finally colorize the area
+                    me.colorize(xb,yb);
+                }else{
+                    // or update the boundaries for the area that then should be colorized
+                    if(xb < bounds["l"]){
+                        bounds["l"] = xb;
+                    }
+                    if(yb < bounds["t"]){
+                        bounds["t"] = yb;
+                    }
+                    if(xc > bounds['r']){
+                        bounds['r'] = xc;
+                    }
+                    if(yc > bounds['b']){
+                        bounds['b'] = yc;
+                    }
+                }
         },
         toggleDisplay: function(){
                 var me = this,
