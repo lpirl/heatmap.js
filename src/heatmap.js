@@ -186,7 +186,6 @@
                 config = me.config,
                 title = config.title || "Legend",
                 position = config.position,
-                offset = config.offset || 10,
                 gconfig = config.gradient,
                 labelsEl = document.createElement("ul"),
                 labelsHtml = "",
@@ -197,21 +196,27 @@
             // Positioning
 
             // top or bottom
-            if(position.indexOf('t') > -1){
-                positionCss += 'top:'+offset+'px;';
+            if(position['t'] > -1){
+                positionCss += 'top:'+position['t']+'px;';
             }else{
-                positionCss += 'bottom:'+offset+'px;';
+                positionCss += 'bottom:'+position['b']+'px;';
             }
 
             // left or right
-            if(position.indexOf('l') > -1){
-                positionCss += 'left:'+offset+'px;';
+            if(position['l'] > -1){
+                positionCss += 'left:'+position['l']+'px;';
             }else{
-                positionCss += 'right:'+offset+'px;';
+                positionCss += 'right:'+position['r']+'px;';
             }
 
             element = document.createElement("div");
-            element.style.cssText = "border-radius:5px;position:absolute;"+positionCss+"font-family:Helvetica; width:256px;z-index:10000000000; background:rgba(255,255,255,1);padding:10px;border:1px solid black;margin:0;";
+            if(config.class) {
+                element.className = config.class;
+                element.style.cssText = positionCss;
+            }
+            else {
+                element.style.cssText = "border-radius:5px;position:absolute;"+positionCss+"font-family:Helvetica; width:256px;z-index:10000000000; background:rgba(255,255,255,1);padding:10px;border:1px solid black;margin:0;";
+            }
             element.innerHTML = "<h3 id='moodmap-legend-title' style='padding:0;margin:0;text-align:center;font-size:16px;'>"+title+"</h3>";
             // create gradient in canvas
             labelsEl.style.cssText = "position:relative;font-size:12px;display:block;list-style:none;list-style-type:none;margin:0;height:15px;";
