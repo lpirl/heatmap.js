@@ -443,7 +443,7 @@
                 me.set("actx", actx);
 
                 me.resize();
-                canvas.style.cssText = acanvas.style.cssText = "position:absolute;top:0;left:0;z-index:10000000;";
+                canvas.style.cssText = acanvas.style.cssText = "position:absolute;top:0;left:0;";
 
                 if(!me.get("visible"))
                     canvas.style.display = "none";
