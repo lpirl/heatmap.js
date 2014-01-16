@@ -67,7 +67,7 @@
 			<h1>OpenLayers Heatmap Overlay</h1>
 			<a href="http://www.patrick-wied.at/static/heatmapjs/" title="heatmap.js">Back to the project page</a><br /><br />
 			<div id="heatmapArea">
-			
+
 			</div>
 			<div id="configArea">
 				<h2>Sidenotes</h2>
@@ -75,7 +75,7 @@
 				<strong>Note: this is an early release of the OpenLayers heatmap layer. Please feel free to <a href="https://github.com/pa7/heatmap.js">contribute patches</a>. (e.g: display datapoints on dragend even when they weren't visible before)</strong>
 				<div id="tog" class="btn">Toggle HeatmapOverlay</div>
 			</div>
-			
+
 <div style="position:absolute;width:940px;top:750px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by <a href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a></div>
 
 </div>
@@ -99,7 +99,7 @@ function init(){
         datalen = data.length,
         nudata = [];
 
-    // in order to use the OpenLayers Heatmap Layer we have to transform our data into 
+    // in order to use the OpenLayers Heatmap Layer we have to transform our data into
     // { max: <max>, data: [{lonlat: <OpenLayers.LonLat>, count: <count>},...]}
 
     while(datalen--){
@@ -112,23 +112,23 @@ function init(){
     transformedTestData.data = nudata;
 
    map = new OpenLayers.Map( 'heatmapArea');
-    layer = new OpenLayers.Layer.OSM();
+   layer = new OpenLayers.Layer.OSM();
 
    // create our heatmap layer
    heatmap = new OpenLayers.Layer.Heatmap( "Heatmap Layer", map, layer, {visible: true, radius:10}, {isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection("EPSG:4326")});
    map.addLayers([layer, heatmap]);
-  
+
    map.zoomToMaxExtent();
    map.zoomIn();
    heatmap.setDataSet(transformedTestData);
 }
 
-window.onload = function(){ 
-    init(); 
+window.onload = function(){
+    init();
 };
 
 document.getElementById("tog").onclick = function(){
-    heatmap.toggle();	
+    heatmap.toggle();
 };
 
 

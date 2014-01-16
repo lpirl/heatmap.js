@@ -120,7 +120,8 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
             }
             this.heatmap.store.addDataPoint.apply(this.heatmap.store, args);
         }
-
+        /* hack */
+        return pixel;
     },
     toggle: function(){
             this.heatmap.toggleDisplay();
