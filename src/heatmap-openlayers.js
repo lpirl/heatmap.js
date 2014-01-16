@@ -35,7 +35,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
         this.heatmap = h337.create(hmoptions);
 
         handler = function(){
-            if(this.tmpData.max){
+            if(this.tmpData.max && this.tmpData.min){
                 this.updateLayer();
             }
         };
@@ -74,6 +74,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
             entry, lonlat, pixel;
 
             set.max = obj.max;
+            set.min = obj.min;
             set.data = [];
             // get the pixels for all the lonlat entries
         while(dlen--){
