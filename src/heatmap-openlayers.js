@@ -83,7 +83,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
             pixel = this.roundPixels(this.getViewPortPxFromLonLat(lonlat));
 
             if(pixel){
-                set.data.push({x: pixel.x, y: pixel.y, count: entry.count});
+                set.data.push({x: pixel.x, y: pixel.y, mood: entry.mood});
             }
         }
         this.tmpData = obj;
@@ -102,12 +102,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
     },
     // same procedure as setDataSet
     addDataPoint: function(lonlat){
-        var pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(lonlat)),
+        var pixel = this.roundPixels(hm.openLayersMap.getPixelFromLonLat(lonlat)),
             entry = {lonlat: lonlat},
             args;
 
         if(arguments.length == 2){
-            entry.count = arguments[1];
+            entry.mood = arguments[1];
         }
 
         this.tmpData.data.push(entry);
