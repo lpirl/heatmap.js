@@ -519,10 +519,11 @@
                 var me = this,
                     width = me.get("width"),
                     radius = me.get("radius"),
+                    blur = me.get("blur"),
                     height = me.get("height"),
                     actx = me.get("actx"),
                     ctx = me.get("ctx"),
-                    x2 = radius * 3,
+                    realRadius = radius + blur,
                     premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("palette"),
                     opacity = me.get("opacity"),
@@ -531,46 +532,17 @@
                     left, top, bottom, right,
                     image, imageData, length, alpha, offset, finalAlpha;
 
+                var bounds = {}
                 if(x != null && y != null){
-                    if(x+x2>width){
-                        x=width-x2;
-                    }
-                    if(x<0){
-                        x=0;
-                    }
-                    if(y<0){
-                        y=0;
-                    }
-                    if(y+x2>height){
-                        y=height-x2;
-                    }
-                    left = x;
-                    top = y;
-                    right = x + x2;
-                    bottom = y + x2;
-
+                    bounds = this._getBoundsForCircleAtPoint(x, y);
                 }else{
-                    if(bounds['l'] < 0){
-                        left = 0;
-                    }else{
-                        left = bounds['l'];
-                    }
-                    if(bounds['r'] > width){
-                        right = width;
-                    }else{
-                        right = bounds['r'];
-                    }
-                    if(bounds['t'] < 0){
-                        top = 0;
-                    }else{
-                        top = bounds['t'];
-                    }
-                    if(bounds['b'] > height){
-                        bottom = height;
-                    }else{
-                        bottom = bounds['b'];
-                    }
+                    bounds = this._getBounds();
                 }
+                left = bounds.left;
+                right = bounds.right;
+                top = bounds.top;
+                bottom = bounds.bottom;
+
 
                 image = actx.getImageData(left, top, right-left, bottom-top);
                 imageData = image.data;
@@ -660,6 +632,34 @@
             context.closePath();
         },
 
+        _getBoundsForCircleAtPoint: function(x, y){
+            var me = this,
+                width = me.get("width"),
+                height = me.get("height"),
+                blur = me.get("blur"),
+                radius = me.get("radius"),
+                realRadius = radius + blur;
+            return {
+                left:   Math.max(0,      x-realRadius),
+                right:  Math.min(width,  x+realRadius),
+                top:    Math.max(0,      y-realRadius),
+                bottom: Math.min(height, y+realRadius),
+            };
+        },
+
+        _getBounds: function(){
+            var me = this,
+                width = me.get("width"),
+                height = me.get("height");
+                bounds = me.get("bounds");
+            return {
+                left:   Math.max(0,      bounds['l']),
+                right:  Math.min(width,  bounds['r']),
+                top:    Math.max(0,      bounds['t']),
+                bottom: Math.min(height, bounds['b'])
+            };
+        },
+
         drawAlpha: function(x, y, mood, colorize){
                 // storing the variables because they will be often used
                 var me = this,
@@ -668,10 +668,11 @@
                     bounds = me.get("bounds"),
                     blur = me.get("blur"),
                     // move the circles center 150% to top left:
-                    xb = x - (1.5 * radius) >> 0,
-                    yb = y - (1.5 * radius) >> 0,
-                    xc = x + (1.5 * radius) >> 0,
-                    yc = y + (1.5 * radius) >> 0,
+                    realRadius = (radius + (blur/2))>>0,
+                    xb = x - realRadius,
+                    yb = y - realRadius,
+                    xc = x + 2*realRadius,
+                    yc = y + 2*realRadius,
                     redGreen = me._moodToRedGreen(mood),
                     shadowColor = 'rgba(' +
                         redGreen.red + ',' +
@@ -684,7 +685,7 @@
 
                 if(colorize){
                     // finally colorize the area
-                    me.colorize(xb,yb);
+                    me.colorize(x,y);
                 }else{
                     // or update the boundaries for the area that then should be colorized
                     if(xb < bounds["l"]){
