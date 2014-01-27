@@ -39,8 +39,11 @@
         // function for adding datapoints to the store
         // datapoints are usually defined by x and y but could also contain a third parameter which represents the occurrence
         addDataPoint: function(x, y, mood){
-            if(x < 0 || y < 0)
-                return;
+            var width = me.get("width"),
+                height = me.get("height");
+
+
+            if(x < 0 || y < 0 || x > width || y > height) return;
 
             var me = this,
                 moodmap = me.get("moodmap"),
@@ -344,6 +347,7 @@
             radius : 40,
             blur : 30, // hardness for intersection of points
             drawingOffset: 15000,
+            margin: 20,
             element : {},
             canvas : {},
             acanvas: {},
@@ -396,11 +400,18 @@
                     rout, rin;
 
                 me.set("radius", config["radius"] || 40);
+                me.set("margin", config["margin"] || (get("radius") / 2 >> 0));
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || 1);
                 me.set("min", config.min || 0);
-                me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
+                me.set("gradient", config.gradient || {
+                    0.45: "rgb(0,0,255)",
+                    0.55: "rgb(0,255,255)",
+                    0.65: "rgb(0,255,0)",
+                    0.95: "yellow",
+                    1.00: "rgb(255,0,0)"
+                });
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
