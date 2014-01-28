@@ -39,12 +39,6 @@
         // function for adding datapoints to the store
         // datapoints are usually defined by x and y but could also contain a third parameter which represents the occurrence
         addDataPoint: function(x, y, mood){
-            var width = me.get("width"),
-                height = me.get("height");
-
-
-            if(x < 0 || y < 0 || x > width || y > height) return;
-
             var me = this,
                 moodmap = me.get("moodmap"),
                 data = me.get("data");
@@ -78,7 +72,7 @@
                     moodmap.get("width"),
                     moodmap.get("height")
                 );
-                me.setDataSet({ max: data[x][y], data: data }, true);
+                me.setDataSet({ max: data[x][y], data: data });
                 return;
             } */
 
@@ -87,44 +81,34 @@
         setDataSet: function(obj, internal){
             var me = this,
                 moodmap = me.get("moodmap"),
-                data = [],
-                d = obj.data,
-                dlen = d.length;
+                data = obj.data;
+
             // clear the moodmap before the data set gets drawn
             moodmap.clear();
+
             this.max = obj.max;
             this.min = obj.min;
+
             // if a legend is set, update it
-            moodmap.legend && moodmap.legend.update(obj.max);
-            moodmap.legend && moodmap.legend.update(obj.min);
+            moodmap.legend && moodmap.legend.update();
 
             if(internal != null && internal){
-                for(var one in d){
-                    // jump over undefined indexes
-                    if(one === undefined)
-                        continue;
-                    for(var two in d[one]){
-                        if(two === undefined)
-                            continue;
-                        // if both indexes are defined, push the values into the array
-                        moodmap.drawAlpha(one, two, d[one][two], false);
+                // internally, we expect data to be in data[x][y] format
+                // already and already in store
+                for(var x in data){
+                    if(data[x] === undefined) continue;
+                    for(var y in data[x]){
+                        if(y === undefined) continue;
+                        moodmap.drawAlpha(x, y, data[x][y], false);
                     }
                 }
             }else{
-                while(dlen--){
-                    var point = d[dlen];
-                    moodmap.drawAlpha(point.x, point.y, point.mood, false);
-                    if(!data[point.x])
-                        data[point.x] = [];
-
-                    if(!data[point.x][point.y])
-                        data[point.x][point.y] = 0;
-
-                    data[point.x][point.y] = point.mood;
+                for(var i in data){
+                    var point = data[i];
+                    me.addDataPoint(point.x, point.y, point.mood)
                 }
             }
             moodmap.colorize();
-            this.set("data", d);
         },
         exportDataSet: function(){
             var me = this,
@@ -400,7 +384,7 @@
                     rout, rin;
 
                 me.set("radius", config["radius"] || 40);
-                me.set("margin", config["margin"] || (get("radius") / 2 >> 0));
+                me.set("margin", config["margin"] || (me.get("radius") / 2 >> 0));
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || 1);
@@ -671,14 +655,16 @@
             };
         },
 
-        drawAlpha: function(x, y, mood, colorize){
+        drawAlpha: function(x, y, mood, redraw_colors){
                 // storing the variables because they will be often used
                 var me = this,
-                    radius = me.get("radius"),
                     ctx = me.get("actx"),
+                    height = me.get("height"),
+                    width = me.get("width"),
+                    radius = me.get("radius"),
                     bounds = me.get("bounds"),
+                    margin = me.get("margin"),
                     blur = me.get("blur"),
-                    // move the circles center 150% to top left:
                     realRadius = (radius + (blur/2))>>0,
                     xb = x - realRadius,
                     yb = y - realRadius,
@@ -694,7 +680,7 @@
 
                 this.drawCircle(ctx, x, y, shadowColor);
 
-                if(colorize){
+                if(redraw_colors){
                     // finally colorize the area
                     me.colorize(x,y);
                 }else{
