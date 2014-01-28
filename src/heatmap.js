@@ -384,7 +384,9 @@
                     rout, rin;
 
                 me.set("radius", config["radius"] || 40);
-                me.set("margin", config["margin"] || (me.get("radius") / 2 >> 0));
+                me.set("blur", config["blur"] || 30);
+                var realRadius = (me.get("blur")/2 + me.get("radius")) >> 0,
+                me.set("margin", config["margin"] || realRadius);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || 1);
@@ -659,17 +661,15 @@
                 // storing the variables because they will be often used
                 var me = this,
                     ctx = me.get("actx"),
-                    height = me.get("height"),
-                    width = me.get("width"),
-                    radius = me.get("radius"),
-                    bounds = me.get("bounds"),
                     margin = me.get("margin"),
-                    blur = me.get("blur"),
-                    realRadius = (radius + (blur/2))>>0,
-                    xb = x - realRadius,
-                    yb = y - realRadius,
-                    xc = x + 2*realRadius,
-                    yc = y + 2*realRadius,
+                    width = me.get("width"),
+                    height = me.get("height"),
+                    drawingWidth = width - 2*margin,
+                    drawingHeight = height - 2*margin,
+                    widthDrawingWidthRatio = drawingWidth / width,
+                    heightDrawingHeightRatio = drawingHeight / height,
+                    realX = ((x + margin) * widthDrawingWidthRatio) >> 0,
+                    realY = ((y + margin) * heightDrawingHeightRatio) >> 0,
                     redGreen = me._moodToRedGreen(mood),
                     shadowColor = 'rgba(' +
                         redGreen.red + ',' +
@@ -678,25 +678,25 @@
                         0.5 +       // treat all layers equally
                     ')';
 
-                this.drawCircle(ctx, x, y, shadowColor);
+                this.drawCircle(ctx, realX, realY, shadowColor);
 
                 if(redraw_colors){
                     // finally colorize the area
-                    me.colorize(x,y);
+                    me.colorize(realX, realY);
                 }else{
                     // or update the boundaries for the area that then should be colorized
-                    if(xb < bounds["l"]){
-                        bounds["l"] = xb;
-                    }
-                    if(yb < bounds["t"]){
-                        bounds["t"] = yb;
-                    }
-                    if(xc > bounds['r']){
-                        bounds['r'] = xc;
-                    }
-                    if(yc > bounds['b']){
-                        bounds['b'] = yc;
-                    }
+                    var bounds = me.get("bounds"),
+                        radius = me.get("radius"),
+                        blur = me.get("blur"),
+                        realRadius = (radius + (blur/2))>>0,
+                        left = realX - realRadius,
+                        top = realY - realRadius,
+                        right = realX + realRadius,  // might be 2*realRadius?
+                        bottom = realY + realRadius; // might be 2*realRadius?
+                    if(left < bounds["l"]) bounds["l"] = left;
+                    if(top < bounds["t"]) bounds["t"] = top;
+                    if(right > bounds['r']) bounds['r'] = right;
+                    if(bottom > bounds['b']) bounds['b'] = bottom;
                 }
         },
         toggleDisplay: function(){
