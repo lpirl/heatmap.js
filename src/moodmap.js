@@ -763,5 +763,5 @@
             }
         };
     })();
-    w.h337 = w.moodmapFactory = moodmapFactory;
+    w.moodmapFactory = moodmapFactory;
 })(window);
