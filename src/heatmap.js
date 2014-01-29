@@ -385,7 +385,7 @@
 
                 me.set("radius", config["radius"] || 40);
                 me.set("blur", config["blur"] || 30);
-                var realRadius = (me.get("blur")/2 + me.get("radius")) >> 0,
+                var realRadius = (me.get("blur")/2 + me.get("radius")) >> 0;
                 me.set("margin", config["margin"] || realRadius);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
