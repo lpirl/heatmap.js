@@ -657,19 +657,51 @@
             };
         },
 
+        /* because of the margin, x and y must be converted for drawing
+         * using this ratios
+         */
+        getRealPositionToDrawingPositionRatios: function(x, y){
+            var me = this,
+                margin = me.get("margin"),
+                width = me.get("width"),
+                height = me.get("height"),
+                drawingWidth = width - 2*margin,
+                drawingHeight = height - 2*margin;
+            return {
+                x: drawingWidth / width,
+                y: drawingHeight / height
+            }
+        },
+
+        /* because of the margin, x and y cannot be used directly to draw
+         * a point
+         */
+        getDrawingPosition: function(x, y){
+            var ratios = this.getRealPositionToDrawingPositionRatios(x, y),
+                margin = this.get("margin");
+            return {
+                x: ((x + margin) * ratios.x) >> 0,
+                y: ((y + margin) * ratios.y) >> 0
+            }
+        },
+
+        /* because of the margin, x and y in the canvas must be converted
+         * to look them up in the original data
+         */
+        getOriginalPosition: function(drawingX, drawingY){
+            var ratios = this.getRealPositionToDrawingPositionRatios(x, y),
+                margin = this.get("margin");
+            return {
+                x: ((drawingX / ratios.x) - margin) >> 0,
+                y: ((drawingY + ratios.y) - margin) >> 0
+            }
+        },
+
         drawAlpha: function(x, y, mood, redraw_colors){
                 // storing the variables because they will be often used
                 var me = this,
                     ctx = me.get("actx"),
-                    margin = me.get("margin"),
-                    width = me.get("width"),
-                    height = me.get("height"),
-                    drawingWidth = width - 2*margin,
-                    drawingHeight = height - 2*margin,
-                    widthDrawingWidthRatio = drawingWidth / width,
-                    heightDrawingHeightRatio = drawingHeight / height,
-                    realX = ((x + margin) * widthDrawingWidthRatio) >> 0,
-                    realY = ((y + margin) * heightDrawingHeightRatio) >> 0,
+                    drawingPosition = me.getDrawingPosition(x, y),
                     redGreen = me._moodToRedGreen(mood),
                     shadowColor = 'rgba(' +
                         redGreen.red + ',' +
@@ -678,21 +710,21 @@
                         0.5 +       // treat all layers equally
                     ')';
 
-                this.drawCircle(ctx, realX, realY, shadowColor);
+                this.drawCircle(ctx, drawingPosition.x, drawingPosition.y, shadowColor);
 
                 if(redraw_colors){
                     // finally colorize the area
-                    me.colorize(realX, realY);
+                    me.colorize(drawingPosition.x, drawingPosition.y);
                 }else{
                     // or update the boundaries for the area that then should be colorized
                     var bounds = me.get("bounds"),
                         radius = me.get("radius"),
                         blur = me.get("blur"),
                         realRadius = (radius + (blur/2))>>0,
-                        left = realX - realRadius,
-                        top = realY - realRadius,
-                        right = realX + realRadius,  // might be 2*realRadius?
-                        bottom = realY + realRadius; // might be 2*realRadius?
+                        left = drawingPosition.x - realRadius,
+                        top = drawingPosition.y - realRadius,
+                        right = drawingPosition.x + realRadius,
+                        bottom = drawingPosition.y + realRadius;
                     if(left < bounds["l"]) bounds["l"] = left;
                     if(top < bounds["t"]) bounds["t"] = top;
                     if(right > bounds['r']) bounds['r'] = right;
