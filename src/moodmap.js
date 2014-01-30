@@ -660,7 +660,7 @@
         /* because of the margin, x and y must be converted for drawing
          * using this ratios
          */
-        getRealPositionToDrawingPositionRatios: function(x, y){
+        getRealPositionToDrawingPositionRatios: function(){
             var me = this,
                 margin = me.get("margin"),
                 width = me.get("width"),
@@ -677,7 +677,7 @@
          * a point
          */
         getDrawingPosition: function(x, y){
-            var ratios = this.getRealPositionToDrawingPositionRatios(x, y),
+            var ratios = this.getRealPositionToDrawingPositionRatios(),
                 margin = this.get("margin");
             return {
                 x: ((x + margin) * ratios.x) >> 0,
@@ -689,7 +689,7 @@
          * to look them up in the original data
          */
         getOriginalPosition: function(drawingX, drawingY){
-            var ratios = this.getRealPositionToDrawingPositionRatios(x, y),
+            var ratios = this.getRealPositionToDrawingPositionRatios(),
                 margin = this.get("margin");
             return {
                 x: ((drawingX / ratios.x) - margin) >> 0,
@@ -770,14 +770,6 @@
             },
             util: {
                 mousePosition: function(ev){
-                    // this doesn't work right
-                    // rather use
-                    /*
-                        // this = element to observe
-                        var x = ev.pageX - this.offsetLeft;
-                        var y = ev.pageY - this.offsetTop;
-
-                    */
                     var x, y;
 
                     if (ev.layerX) { // Firefox
