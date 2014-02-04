@@ -52,8 +52,6 @@
             // if mood parameter is set increment by mood otherwise by 1
             data[x][y]+=(mood && mood != null) ? mood : 1;
 
-            me.set("data", data);
-
             /* TODO: In the former days, we checked if there was a new
              * maximum at this point (see below). Maximums could only
              * grow and not shrink. If there was a new maximum, we redrew
@@ -86,8 +84,8 @@
             // clear the moodmap before the data set gets drawn
             moodmap.clear();
 
-            this.max = obj.max;
-            this.min = obj.min;
+            me.max = obj.max;
+            me.min = obj.min;
 
             // if a legend is set, update it
             moodmap.legend && moodmap.legend.update();
