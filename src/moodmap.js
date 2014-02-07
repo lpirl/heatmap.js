@@ -691,7 +691,7 @@
                 margin = this.get("margin");
             return {
                 x: ((drawingX / ratios.x) - margin) >> 0,
-                y: ((drawingY + ratios.y) - margin) >> 0
+                y: ((drawingY / ratios.y) - margin) >> 0
             }
         },
 
